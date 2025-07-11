@@ -1,19 +1,22 @@
 # datos y estructuras:
 ## Usuarios (Vertices)
 archivo:twitter_users.csv
-Contiene una linea de encabezado y luego lineas con 6 campos separados por ;, que corresponden a:
+Contiene una linea de encabezado y luego lineas con 6 campos separados por ";", que corresponden a:
 - User_ID
 - User_Name
 - Followers_Count
 - Nomber_Tweets
 - Friends_Count
 - Created At
-estructuras:
+
+### estructuras:
 unordered map clave-> User_ID y un struct para el resto de datos, esto tiene sentido ya que tiene una cantidad fija de campos. 
 Analizamos si sería mejor trabajar con una tupla conociendo el orden de los datos pero determinamos que un struct hace mas facil de leer el código, hace que podamos incorporar los campos que ahora estamos ignorando con facilidad en un futuro y no tiene diferencia en el desempeño y ni en el tamaño en memoria significativas:
-Fuente: preguntado a chatGPT que entregó las siguientes fuentes confiables:
+### Fuente: 
+Consulta realizada en chatGPT que entregó las siguientes fuentes:
 Codigo: 
-'''cpp
+
+''' cpp
 #include <tuple>
 #include <string>
 #include <iostream>
@@ -35,6 +38,7 @@ int main() {
     std::cout << sizeof(p) << std::endl;
 }
 '''
+
 https://en.cppreference.com/w/cpp/utility/tuple.html
 https://eel.is/c++draft/class.mem
 Prueba: el assembly generado (-O2 o -O3) es el mismo. Puedes verlo en Compiler Explorer.
