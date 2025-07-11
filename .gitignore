@@ -39,3 +39,8 @@
 
 # debug information files
 *.dwo
+
+#especificos (base de datos)
+dataset_twitter-1.zip
+twitter_connections.csv
+twitter_users.csv
