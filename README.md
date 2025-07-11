@@ -16,7 +16,7 @@ Analizamos si sería mejor trabajar con una tupla conociendo el orden de los dat
 Consulta realizada en chatGPT que entregó las siguientes fuentes:
 Codigo: 
 
-´´´ cpp
+``` cpp
 #include <tuple>
 #include <string>
 #include <iostream>
@@ -37,7 +37,7 @@ int main() {
     std::cout << sizeof(t) << std::endl;
     std::cout << sizeof(p) << std::endl;
 }
-´´´
+```
 
 
 https://en.cppreference.com/w/cpp/utility/tuple.html
