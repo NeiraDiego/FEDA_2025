@@ -39,7 +39,7 @@ Dado que la operación que mas utilizremos será la busqueda, utilizarémos una 
 debido a la decisión de utilizar los User_ID como clave en el UMap es que deberemos realizar una conversion de las aristas de User_Name->User_Name a User_ID->User_ID para poder relacionarla la estructura Perfiles (más detalles en las discusiones)
 
 ## CFS Componentes fuertemente conexas
-Es un Struct que almacenará datos de las CFS con un ID Correspondiente al User_ID del miembro más popular, un vector que incluya todos los miembros, en el cuál solo buscaremos presencia por lo que unordered_set es suficiente (primero usabamos un vector pero vimos que las busquedas son mas eficientes en esta estrcutura) y 4 floats que guardarán el porcentaje de cada una de la tendencias políticas que le asignaremos a cada componente. Finalmente usaremos otro unordered_set para almacenar los (hasta 5) miembros más influyentes de la componente.
+Es un Struct que almacenará datos de las CFC con un ID Correspondiente al User_ID del miembro más popular, un vector que incluya todos los miembros, en el cuál solo buscaremos presencia por lo que unordered_set es suficiente (primero usabamos un vector pero vimos que las busquedas son mas eficientes en esta estrcutura) y 4 floats que guardarán el porcentaje de cada una de la tendencias políticas que le asignaremos a cada componente. Finalmente usaremos otro unordered_set para almacenar los (hasta 5) miembros más influyentes de la componente.
 
 # implementacion:
 ## Captura de datos y carga en estructura de datos
@@ -115,8 +115,7 @@ Para el resto de los datos, la primera desición que tomamos fue arbitrariamente
 Luego, analizamos si sería mejor trabajar con una tupla conociendo el orden de los campos, pero determinamos que un struct hace mas facil de leer y/o corregir el código, y además hace que podamos incorporar mas adelante los campos que ahora estamos ignorando en caso de que queramos ampliar el estudio. Modificando solo el struct, la función de captura y la función donde que queramos incorporar o ampliar.
 
 #### Diferencia de tupla v/s Struct: 
-Consulta realizada en chatGPT que entregó las siguientes fuentes:
-Codigo: 
+Consulta realizada en chatGPT que entregó el siguiente código: 
 
 ``` cpp
 #include <tuple>
@@ -142,6 +141,7 @@ int main() {
 }
 ```
 
+Y estas fuentes:
 
 https://en.cppreference.com/w/cpp/utility/tuple.html
 https://eel.is/c++draft/class.mem
@@ -165,3 +165,7 @@ Lo siguiente fue reconocer que todos los usuarios son particulares y distintos p
 
 Elegimos incorporar ambos piezas de información en el cálculo de cada definitivo de las tendencias, la siguiente desición fue determinar como agregaríamos cada dato, vimos dos opciones que nos parecieron razonables, la primera fue establecer un promedio simple entre la tendencia calculada por distancias de usuario y la de su CFC, lo que podría generar porcentajes que sumen mas de 100%, y luego ponderar para llegar a la suma 100. La segunda opción y la que elegimos de forma arbitraria fue entregar, en lugar de un valor un rango de valores, determinados por los limites de las dos opciones que se promediaban en el cálculo anterior. Escogimos esto ya que nos pareció que: por un lado, incorpora la información del cálculo anterior y por otro lado el tamaño del rango nos entrega información adicional que nos parece relevante, rangos mas amplios informan que tan distantes estan las ideologías del usuario de la de su comunidad (CFC)
 
+### Problema encontrado para usuarios influyentes:
+Durante el desarrollo del código, nos encontramos con una situación que no habíamos previsto de antemano: cuando itentamos imprimir los 10 usuarios mas influyentes nos dimos cuenta de que el uso de unordered map en lugar de un vector para almacenar los usuarios. Hacía necesario copiar todos los datos en un vector y luego realizar un ordenamiento cada vez que quisieramos encontrar un top de usuarios, lo que eliminaba la ventaja de elegir esa estructura. 
+En lugar de esto, encontramos una solucion diferente, hicimos un cambio en el que creamos una funcion que nos permite conocer el los top k usuarios, generalizada en k para poser usarla en el digrafo completo pero también en cada CFC para encontrar el lideres y el conjunto de lideres internos que necesitabamos para el resto de cálculos.
+Esto genera una mejora en terminos temporales de O(E log E) a O(E log k) y como k es constante esto es O(E) que es recorrer solo una vez todos los usuarios (E) para encontrar el top K. 

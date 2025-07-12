@@ -1,4 +1,6 @@
 #include "captura.h"
+#include "calculos.h"
+#include "salidas.h"
 
 #include <iostream>
 #include <unordered_map>
@@ -23,5 +25,11 @@ int main() {
         if (++count >= 100) break;
     }
 
+
+    vector<CFC> componentes;
+    encontrarCFCs(adyacencia, usuarios, componentes);
+
+    guardarUsuariosRelevantes(usuarios, "usuarios_relevantes.csv");
+  
     return 0;
 }
