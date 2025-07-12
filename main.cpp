@@ -12,9 +12,17 @@ int main() {
     unordered_map<long long, Perfil> usuarios;
     unordered_map<long long, vector<long long>> adyacencia;
 
-    cargarUsuarios("twitter_users.csv", usuarios);
-    cargarConexiones("twitter_connections.csv", usuarios, adyacencia);
 
+// miniprueba con 8 usuarios y dos CFC
+//    cargarUsuarios("twitter_users_prueba.csv", usuarios);
+//    cargarConexiones("twitter_connections_prueba.csv", usuarios, adyacencia);
+
+    cargarUsuarios("twitter_users_prueba.csv", usuarios);
+    cargarConexiones("twitter_connections_prueba.csv", usuarios, adyacencia);
+
+
+// ######## prueba impresio 100 usuarios #####
+/*
     cout << "\nPrimeros 100 usuarios:\n";
     int count = 0;
     for (const auto& [id, perfil] : usuarios) {
@@ -24,7 +32,7 @@ int main() {
              << ", Friends: " << perfil.Friends_Count << '\n';
         if (++count >= 100) break;
     }
-
+*/
 
     vector<CFC> componentes;
     encontrarCFCs(adyacencia, usuarios, componentes);

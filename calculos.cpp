@@ -59,7 +59,7 @@ void dfsCFC(long long nodo,
 
 // Función principal: encuentra todas las CFCs
 void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& grafo,
-                   const std::unordered_map<long long, Perfil>& usuarios,
+                   std::unordered_map<long long, Perfil>& usuarios,
                    std::vector<CFC>& componentes) {
     auto inicio = high_resolution_clock::now();
 
@@ -129,5 +129,6 @@ void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& 
     cout << "\nTotal de CFCs encontradas: " << componentes.size() << endl;
     cout << "CFCs de tamaño 1: " << cantidad_CFC_tam_1 << endl;
     cout << "CFCs de tamaño > 1: " << cantidad_CFC_tam_mayor_1 << endl;
+
 }
  

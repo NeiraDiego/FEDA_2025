@@ -19,7 +19,7 @@ struct CFC {
 
 // Encuentra todas las CFCs usando Kosaraju
 void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& grafo,
-                   const std::unordered_map<long long, Perfil>& usuarios,
+                   std::unordered_map<long long, Perfil>& usuarios,
                    std::vector<CFC>& componentes);
 
 #endif
