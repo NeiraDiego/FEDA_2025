@@ -65,6 +65,9 @@ para cada conexión (de seguimiento unidireccional) entre usuarios
 ### Tratamiento: 
 debido a la decisión de utilizar los User_ID como clave en el UMap es que deberemos realizar una conversion de las aristas de User_Name->User_Name a User_ID->User_ID para poder relacionarla la estructura Perfiles (más detalles en las discusiones)
 
+## CFS Componentes fuertemente conexas
+Es un Struct que almacenará datos de las CFS con un ID Correspondiente al User_ID del miembro más popular, un vector que incluya todos los miembros, en el cuál solo buscaremos presencia por lo que unordered_set es suficiente (primero usabamos un vector pero vimos que las busquedas son mas eficientes en esta estrcutura) y 4 floats que guardarán el porcentaje de cada una de la tendencias políticas que le asignaremos a cada componente. Finalmente usaremos otro unordered_set para almacenar los (hasta 5) miembros más influyentes de la componente.
+
 # implementacion:
 ## Captura de datos y carga en estructura de datos
 ### Captura de datos desde archivo usuarios
@@ -82,9 +85,24 @@ Para realizar la busqueda de componentes fuertemente conexas decidimos utilizar 
 - Recorrer por DFS los nodos no visitados y todos los que son alcanzables son parte de la componente
 
 ## Busqueda de personas mas influyentes (de cada componente)
+- Seleccionamos con un ciclo for las 5 personas mas influyentes de cada componente, entendiendo por infuyente, que tenga mayor número de seguidores(en caso de que el componente esté compuesto por menos de 5 miembros, todos ellos son considerados los más influyentes) 
+- La persona mas influyente determinará el ID de la componente
 
+## Determinación de ideología directa
+- Definimos una función dist que con uso de DFS nos permite determinar la distancia de un nodo u a un nodo v
+- Definiremos la funcion para ideologia calcular la ideología directa de un nodo con la formula:
+    - (hay que incluir que v-v hace que el nodo sea 100 de su propia ideología)
+    - Calculamos con la funcion dist, la distancia del nodo a cada uno de los 4 medios y los almacenamos localmente para calcular:
+    - % de ideologia directa I = 1 - (Distancia a medio con ideología I/Suma Distancias)
 
-## Definición 
+## Definición de la ideología de cada componente
+- Definiremos los porcentajes de ideologia de la componente como el promedio de las ideologías de cada uno de los miembros influyentes utilizando la formula anterior
+
+## Determinación de ideología social para un usuario en concreto
+- Definimos el porcentaje de la ideología social como un rango de porcentajes para cada una de las cuatro ideologias cuyos limites son:
+    - Limite inferior: min(ideología directa, ideoloía de su CFC)
+    - Limite superior: max(ideología directa, ideoloía de su CFC)
+
 
 
 ### Discusiones: 
