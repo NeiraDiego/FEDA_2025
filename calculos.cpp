@@ -78,42 +78,41 @@ void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& 
 
     // 3. DFS en grafo invertido para encontrar CFCs
     visitado.clear();
-
+    
+    int cantidad_CFC_tam_1 = 0;
+    int cantidad_CFC_tam_mayor_1 = 0;
     while (!pila.empty()) {
         long long nodo = pila.top(); pila.pop();
 
         if (!visitado.count(nodo)) {
             unordered_set<long long> miembros;
             dfsCFC(nodo, grafo_invertido, visitado, miembros);
-        if (miembros.size() > 1) {
-          CFC componente;
-          componente.miembros = miembros;
+            CFC componente;
+            componente.miembros = miembros;
 
-          // Armar submapa con los perfiles de los miembros
-          unordered_map<long long, Perfil> submapa;
-          for (long long id : miembros) {
-            auto it = usuarios.find(id);
-            if (it != usuarios.end()) {
-              submapa[id] = it->second;
+            // Armar submapa con perfiles
+            unordered_map<long long, Perfil> submapa;
+            for (long long id : miembros) {
+               auto it = usuarios.find(id);
+               if (it != usuarios.end()) {
+                    submapa[id] = it->second;
+               }
             }
+            if (miembros.size() == 1) cantidad_CFC_tam_1++;
+            else cantidad_CFC_tam_mayor_1++;
+
+           // Elegir ID según el más influyente
+            auto top = topKUsuarios(submapa, 1, [](const Perfil& p) {
+                return p.Followers_Count;
+            });
+            if (!top.empty()) {
+                componente.id = top[0].User_ID;
+            } else {
+                componente.id = *miembros.begin(); // fallback
+            }
+
+            componentes.push_back(componente);
           }
-
-    // Obtener el usuario con más followers
-    auto top = topKUsuarios(submapa, 1, [](const Perfil& p) {
-        return p.Followers_Count;
-    });
-
-    if (!top.empty()) {
-        componente.id = top[0].User_ID;
-    } else {
-        componente.id = *miembros.begin(); // fallback
-    }
-
-    componentes.push_back(componente);
-}
-
-
-        }
     }
 
     auto fin = high_resolution_clock::now();
@@ -121,13 +120,14 @@ void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& 
 
     cout << "Tiempo total para encontrar las CFCs: " << duracion << " ms" << endl;
 
-    cout << "\nTotal de CFCs encontradas (de tamaño > 1): " << componentes.size() << endl;
-
     // Imprimir las 3 primeras CFCs
     cout << "\nPrimeras 3 CFCs encontradas:\n";
     for (int i = 0; i < componentes.size() && i < 3; ++i) {
         const auto& cfc = componentes[i];
         cout << "CFC #" << i+1 << " (ID: " << cfc.id << ", Miembros: " << cfc.miembros.size() << ")\n";
     }
+    cout << "\nTotal de CFCs encontradas: " << componentes.size() << endl;
+    cout << "CFCs de tamaño 1: " << cantidad_CFC_tam_1 << endl;
+    cout << "CFCs de tamaño > 1: " << cantidad_CFC_tam_mayor_1 << endl;
 }
  
