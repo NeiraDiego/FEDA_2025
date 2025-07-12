@@ -15,7 +15,7 @@ unordered map clave-> User_ID y un struct para el resto de datos, esto tiene sen
 - User_ID: verificar si int soporta el mayor valor, lo tuvimos que cambiar por long long
 - User_Name: necesario para Mostrar en pantalla en lenguaje humano (string)
 - Followers_Count: lo mantenemos ya que se necesita para determinar los lideres y utilizaremos int
-- Nomber_Tweets: lo desechamos ya que sacrificamos flexibilidad del código en post del tamaño de las estructuras en memoria, somos concientes de que no lo usamos en ninguna parte del análisis. Se podría agregar sin mayor dificultad en caso de ampliar el estudio
+- Nomber_Tweets: lo desechamos ya que sacrificamos flexibilidad del código en pos del tamaño de las estructuras en memoria, somos concientes de que no lo usamos en ninguna parte del análisis. Se podría agregar sin mayor dificultad en caso de ampliar el estudio
 - Friends_Count: lo desechamos por la misma razón anterior
 - Created At: lo desechamos por la misma razon anterior
 - CFC: (Componente fuertemente conexa) es un long long y su valor inicial es igual a User_ID
@@ -98,7 +98,7 @@ También notamos que el mostrador es el único medio que no sigue a nadie en la 
 ### Usuarios (nodos V):
 Antes de definir las estructuras y los algoritmos ya podíamos intuir que las operaciones que mas se repetirían serian la busqueda y el recorrido lineal, es por esto que determinamos que la estructura mas eficiente para almacenar los nodos o usuarios sería un unordered_map.
 
-La siguiente discusión fue la elexión de la llave para para el unordered_map. Fue necesario discriminar si convenía utilizar el User_ID o User_Name como clave.
+La siguiente discusión fue la elección de la llave para para el unordered_map. Fue necesario discriminar si convenía utilizar el User_ID o User_Name como clave.
 Usar User_ID hacía necesario cambiar cada dato (O(E)) y para cada una realizar una busqueda en el U-Map (O(V)) y reemplazarla (O(1)) y la ventaja se genera por la comparación de strings de un tamaño de 1 byte por character del nombre con una cantidad promedio por determinar v/s 8 bytes por ser de typo long long (trabajamos con arquitectura de 64 bits). 
 Para el cálculo más grande que puede ser la busqueda de componentes conexas con el algoritmo de Kosaraju (O(E+V)), la diferencia podría no ser significativa ya que el costo de ordenar (O(E)) + el costo del algoritmo suman asintóticamente lo mismo que no ordenar. Por lo que la diferencia se da a nivel de constantes que acompañan a las operaciones y debido a que el ordenamiento se produce una sola vez y realizaremos varias operaciones (no solo la busqueda de componentes conexas) estimamos que esta diferencia será significativa.
 
