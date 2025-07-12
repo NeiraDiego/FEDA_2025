@@ -80,9 +80,15 @@ Para realizar la busqueda de componentes fuertemente conexas decidimos utilizar 
     - Limite inferior: min(ideología directa, ideoloía de su CFC)
     - Limite superior: max(ideología directa, ideoloía de su CFC)
 
+## Estructura del programa
+Utilizaremos 4 archivos cpp y sus 3 respectivos headers (menos para main.cpp):
+- caputra.cpp: archivo con las funciones para captura de datos, su archivo de encabezados contiene el struct de usuarios
+- calculos.cpp: código para las funciones que calculan las CFC y las ideologías, su .h incluye el struct de los CFC
+- salidas.cpp: archivo para escribir las funciones que entregarán las salidas de forma organizada de la información
+- main.cpp archivo para llamar todas las funciones y ejecutar el programa
+además generaremos un archivo make para compilar todo
 
-
-### Experimentación y Discusión: 
+# Experimentación y Discusión: 
 ## Datos de entrada:
 Lo primero que notamos al observar los archivos con los datos fue el tamaño relativo de las aristas con respecto al número de nodos. 
 De los datos:
