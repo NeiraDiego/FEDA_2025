@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 // Definición del struct para los usuarios
 struct Perfil {
@@ -15,5 +16,11 @@ struct Perfil {
 
 // Función para leer los datos desde el archivo CSV
 void cargarUsuarios(const std::string& nombre_archivo, std::unordered_map<long long, Perfil>& usuarios);
+
+// Carga de conexiones (nombre → ID)
+void cargarConexiones(const std::string& nombre_archivo,
+                      const std::unordered_map<long long, Perfil>& usuarios,
+                      std::unordered_map<long long, std::vector<long long>>& adyacencia);
+
 
 #endif

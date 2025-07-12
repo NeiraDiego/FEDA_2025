@@ -2,13 +2,16 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 
 int main() {
     unordered_map<long long, Perfil> usuarios;
+    unordered_map<long long, vector<long long>> adyacencia;
 
     cargarUsuarios("twitter_users.csv", usuarios);
+    cargarConexiones("twitter_connections.csv", usuarios, adyacencia);
 
     cout << "\nPrimeros 100 usuarios:\n";
     int count = 0;
