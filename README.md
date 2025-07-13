@@ -21,24 +21,29 @@ unordered map clave-> User_ID y un struct para el resto de datos, esto tiene sen
 - CFC: (Componente fuertemente conexa) es un long long y su valor inicial es igual a User_ID
 
 Recordemos que hay cuatro usuarios especiales:
-Cooperativa (7668952;Cooperativa)  es reportada como un medio de izquierda
-El Mostrador (12815132;elmostrador) es reportado como un medio libertario
-Soy Valdivia (239534277;soyvaldiviacl) es reportado como un medio de derecha
-La Tercera (3222731;latercera) es reportado como un medio de centro
+- Cooperativa (7668952;Cooperativa)  es reportada como un medio de izquierda
+- El Mostrador (12815132;elmostrador) es reportado como un medio libertario
+- Soy Valdivia (239534277;soyvaldiviacl) es reportado como un medio de derecha
+- La Tercera (3222731;latercera) es reportado como un medio de centro
 Y son aquellos a los cuales se buscará la distancia para determinar la ideología 
 
 ## Conexiones (Aristas)
 archivo:twitter_connections.csv
+
 Contiene una linea de encabezado y luego lineas con 2 datos separados por ;, que corresponden a:
 - nodo de entrada
 - nodo de salida
 para cada conexión (de seguimiento unidireccional) entre usuarios
+
 ### Estructura: 
 Dado que la operación que mas utilizremos será la busqueda, utilizarémos una lista de adyacencia almacenadas en un unordered_map
+
 ### Tratamiento: 
+
 debido a la decisión de utilizar los User_ID como clave en el UMap es que deberemos realizar una conversion de las aristas de User_Name->User_Name a User_ID->User_ID para poder relacionarla la estructura Perfiles (más detalles en las discusiones)
 
 ## CFS Componentes fuertemente conexas
+
 Es un Struct que almacenará datos de las CFC con un ID Correspondiente al User_ID del miembro más popular, un vector que incluya todos los miembros, en el cuál solo buscaremos presencia por lo que unordered_set es suficiente (primero usabamos un vector pero vimos que las busquedas son mas eficientes en esta estrcutura) y 4 floats que guardarán el porcentaje de cada una de la tendencias políticas que le asignaremos a cada componente. Finalmente usaremos otro unordered_set para almacenar los (hasta 5) miembros más influyentes de la componente.
 
 # implementacion:
@@ -85,20 +90,21 @@ Utilizaremos 4 archivos cpp y sus 3 respectivos headers (menos para main.cpp):
 - caputra.cpp: archivo con las funciones para captura de datos, su archivo de encabezados contiene el struct de usuarios
 - calculos.cpp: código para las funciones que calculan las CFC y las ideologías, su .h incluye el struct de los CFC
 - salidas.cpp: archivo para escribir las funciones que entregarán las salidas de forma organizada de la información
-- main.cpp archivo para llamar todas las funciones y ejecutar el programa
-además generaremos un archivo make para compilar todo
+- main.cpp: archivo para llamar todas las funciones y ejecutar el programa
+- Makefile: además generaremos un archivo make para compilar todo
 
 # Experimentación y Discusión: 
 ## Datos de entrada:
 Lo primero que notamos al observar los archivos con los datos fue el tamaño relativo de las aristas con respecto al número de nodos. 
 De los datos:
-Número de usuarios(V): 41.858
-Número arcos totales: 83.072
-Grado de entrada de Cooperativa: 1.000
-Grado de entrada de Soy Valdivia: 1.000
-Grado de entrada de La Tercera: 700
-Grado de entrada de El mostrador: 1000
+- Número de usuarios(V): 41.858
+- Número arcos totales: 83.072
+- Grado de entrada de Cooperativa: 1.000
+- Grado de entrada de Soy Valdivia: 1.000
+- Grado de entrada de La Tercera: 700
+- Grado de entrada de El mostrador: 1000
 Por lo que si quitamos estos 4 nodos el numero de conexiones queda en 79.272 lo que da un promedio aproximado de 1,8964 conexiones por nodo. Además, por simple observacion hay usuarios que tienen muchos seguidores, por lo que es altamente probable que existan multiples puentes y por lo tanto varias componentes altamente conexas. 
+
 También notamos que el mostrador es el único medio que no sigue a nadie en la muestra y la tercera es sigue a muchos usuarios, los otros dos siguen al menos un usuario.
 
 ## Elección de estructuras:
@@ -106,12 +112,15 @@ También notamos que el mostrador es el único medio que no sigue a nadie en la 
 Antes de definir las estructuras y los algoritmos ya podíamos intuir que las operaciones que mas se repetirían serian la busqueda y el recorrido lineal, es por esto que determinamos que la estructura mas eficiente para almacenar los nodos o usuarios sería un unordered_map.
 
 La siguiente discusión fue la elección de la llave para para el unordered_map. Fue necesario discriminar si convenía utilizar el User_ID o User_Name como clave.
+
 Usar User_ID hacía necesario cambiar cada dato (O(E)) y para cada una realizar una busqueda en el U-Map (O(V)) y reemplazarla (O(1)) y la ventaja se genera por la comparación de strings de un tamaño de 1 byte por character del nombre con una cantidad promedio por determinar v/s 8 bytes por ser de typo long long (trabajamos con arquitectura de 64 bits). 
+
 Para el cálculo más grande que puede ser la busqueda de componentes conexas con el algoritmo de Kosaraju (O(E+V)), la diferencia podría no ser significativa ya que el costo de ordenar (O(E)) + el costo del algoritmo suman asintóticamente lo mismo que no ordenar. Por lo que la diferencia se da a nivel de constantes que acompañan a las operaciones y debido a que el ordenamiento se produce una sola vez y realizaremos varias operaciones (no solo la busqueda de componentes conexas) estimamos que esta diferencia será significativa.
 
 La parte anterior debió ser cambiada ya que originalmente habíamos elegido int, lo que hacía mas facil la comparación, pero al observar los datos (sobre todo los ultimos) encontramos ids que llegan a los 19 digitos por lo que tuvimos que aumentar la capacidad del dato.
 
 Para el resto de los datos, la primera desición que tomamos fue arbitrariamente ignorar los campos de twitts y fecha de creación ya que para todo el analisis de este trabajo no se utilizaron estos datos y no hacía sentido almacenar estos en la RAM mientras no se utilizan. 
+
 Luego, analizamos si sería mejor trabajar con una tupla conociendo el orden de los campos, pero determinamos que un struct hace mas facil de leer y/o corregir el código, y además hace que podamos incorporar mas adelante los campos que ahora estamos ignorando en caso de que queramos ampliar el estudio. Modificando solo el struct, la función de captura y la función donde que queramos incorporar o ampliar.
 
 #### Diferencia de tupla v/s Struct: 
@@ -143,10 +152,10 @@ int main() {
 
 Y estas fuentes:
 
-https://en.cppreference.com/w/cpp/utility/tuple.html
-https://eel.is/c++draft/class.mem
-Prueba: el assembly generado (-O2 o -O3) es el mismo. Puedes verlo en Compiler Explorer.
-https://quick-bench.com/ 
+- https://en.cppreference.com/w/cpp/utility/tuple.html
+- https://eel.is/c++draft/class.mem
+- Prueba: el assembly generado (-O2 o -O3) es el mismo. Puedes verlo en Compiler Explorer.
+- https://quick-bench.com/ 
 
 ## Cálculos
 ### Cálculo de CFC:
@@ -154,6 +163,7 @@ Como mencionamos antes, decidimos utilizar el algoritmo de Kosaraju por su buen 
 Una vez que encontramos las componentes fuertemente conexas decidimos que las utilizaríamos para calcular la tendencia de los usuarios. Segun lo conversado en clases las CFC suelen ser interpretadas como comunidades humanas.
 
 Una vez determinado como calcularíamos e interpretaríamos las CFC pasamos a definir como usaríamos la información que el grafo nos entrega para determinar las tendencias políticas de los diferentes usuarios. El primer gran supuesto que hicimos es que las personas que son mas populares en la red social suelen representar de buena manera la forma en que quieren leer los miembros de la comunidad. 
+
 Dado que una sola persona (la mas pupular) podría generar algun sesgo por algún tema incidental, por ejemplo que siga al medio de comunicación opuesto a su ideología decidimos disminuir ese tipo de anomalía estadística tomando una muestra de 5.
 
 De forma análoga a la estructura Union-Find que utilizamos en clases para el algoritmo de Kruscal, utilizaremos un lider para identificar las diferentes CFC, pero en este caso particular utilizaremos el miembro con mayor influencia (número de seguidores) como lider.
@@ -167,7 +177,9 @@ Elegimos incorporar ambos piezas de información en el cálculo de cada definiti
 
 ### Problema encontrado para usuarios influyentes:
 Durante el desarrollo del código, nos encontramos con una situación que no habíamos previsto de antemano: cuando itentamos imprimir los 10 usuarios mas influyentes nos dimos cuenta de que el uso de unordered map en lugar de un vector para almacenar los usuarios. Hacía necesario copiar todos los datos en un vector y luego realizar un ordenamiento cada vez que quisieramos encontrar un top de usuarios, lo que eliminaba la ventaja de elegir esa estructura. 
+
 En lugar de esto, encontramos una solucion diferente, hicimos un cambio en el que creamos una funcion que nos permite conocer el los top k usuarios, generalizada en k para poser usarla en el digrafo completo pero también en cada CFC para encontrar el lideres y el conjunto de lideres internos que necesitabamos para el resto de cálculos.
+
 Esto genera una mejora en terminos temporales de O(E log E) a O(E log k) y como k es constante esto es O(E) que es recorrer solo una vez todos los usuarios (E) para encontrar el top K. 
 
 # Resultados:
@@ -175,17 +187,17 @@ Esto genera una mejora en terminos temporales de O(E log E) a O(E log k) y como 
 Se realizaron los experimentos en un computador con windows 11 corriendo WSL2 con un procesadro ARM 64 bits y con las bases de datos entregadas
 
 ## Tiempos de lecturas de datos
-Tiempo de carga del archivo de usuarios: 70 ms
-Tiempo de lectura de conexiones: 52 ms
-Tiempo de conversión de User_Name a User_ID: 45 ms
-Tiempo total para encontrar las CFCs: 190 ms
+- Tiempo de carga del archivo de usuarios: 70 ms
+- Tiempo de lectura de conexiones: 52 ms
+- Tiempo de conversión de User_Name a User_ID: 45 ms
+- Tiempo total para encontrar las CFCs: 190 ms
 
 ## Resultados iniciales de los datos
-Total de CFCs encontradas: 39230
-CFCs de tamaño 1: 39214
-CFCs de tamaño > 1: 16
+- Total de CFCs encontradas: 39230
+- CFCs de tamaño 1: 39214
+- CFCs de tamaño > 1: 16
 
 ## Tiempo de procesamiento de los datos
-Tiempo total en calcular ideologías directas: 78999 ms
-Tiempo total en calcular tendencias ideológicas de las CFCs: 22 ms
-Tiempo total en calcular ideología contextual: 57 ms
+- Tiempo total en calcular ideologías directas: 78999 ms
+- Tiempo total en calcular tendencias ideológicas de las CFCs: 22 ms
+- Tiempo total en calcular ideología contextual: 57 ms
