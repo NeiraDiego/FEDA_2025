@@ -209,3 +209,85 @@ unordered_map<string, float> calcularIdeologiaPorDistancia(long long origen,
 
     return resultado;
 }
+
+void calcularTendenciaDeCFCs(vector<CFC>& componentes,
+                              const unordered_map<long long, unordered_map<string, float>>& ideologias_directas) {
+    for (auto& cfc : componentes) {
+        if (cfc.miembros.size() == 1) {
+            // CFC de un solo nodo → usar su ideología directa
+            long long unico_id = *cfc.miembros.begin();
+            if (ideologias_directas.count(unico_id)) {
+                const auto& ideologia = ideologias_directas.at(unico_id);
+                cfc.porcentaje_izquierda   = ideologia.count("izquierda")   ? ideologia.at("izquierda")   : 0.0f;
+                cfc.porcentaje_derecha     = ideologia.count("derecha")     ? ideologia.at("derecha")     : 0.0f;
+                cfc.porcentaje_libertario  = ideologia.count("libertario")  ? ideologia.at("libertario")  : 0.0f;
+                cfc.porcentaje_centro      = ideologia.count("centro")      ? ideologia.at("centro")      : 0.0f;
+            }
+        } else {
+            // CFC con más de un nodo → promedio de top_influyentes
+            float suma_izq = 0, suma_der = 0, suma_lib = 0, suma_centro = 0;
+            int cuenta = 0;
+
+            for (long long id : cfc.top_influyentes) {
+                if (!ideologias_directas.count(id)) continue;
+
+                const auto& ideologia = ideologias_directas.at(id);
+                suma_izq += ideologia.count("izquierda") ? ideologia.at("izquierda") : 0.0f;
+                suma_der += ideologia.count("derecha") ? ideologia.at("derecha") : 0.0f;
+                suma_lib += ideologia.count("libertario") ? ideologia.at("libertario") : 0.0f;
+                suma_centro += ideologia.count("centro") ? ideologia.at("centro") : 0.0f;
+                cuenta++;
+            }
+
+            if (cuenta > 0) {
+                cfc.porcentaje_izquierda   = suma_izq / cuenta;
+                cfc.porcentaje_derecha     = suma_der / cuenta;
+                cfc.porcentaje_libertario  = suma_lib / cuenta;
+                cfc.porcentaje_centro      = suma_centro / cuenta;
+            }
+        }
+    }
+}
+
+void calcularIdeologiaContextualDeUsuarios(
+    const unordered_map<long long, Perfil>& usuarios,
+    const vector<CFC>& componentes,
+    const unordered_map<long long, unordered_map<string, float>>& ideologias_directas,
+    unordered_map<long long, unordered_map<string, pair<float, float>>>& ideologia_contextual
+) {
+    // Mapear CFC por id para acceso rápido
+    unordered_map<long long, const CFC*> cfc_por_id;
+    for (const auto& cfc : componentes) {
+        cfc_por_id[cfc.id] = &cfc;
+    }
+
+    for (const auto& [id, perfil] : usuarios) {
+        if (!ideologias_directas.count(id)) continue;
+
+        const auto& directa = ideologias_directas.at(id);
+        auto& contextual = ideologia_contextual[id];
+
+        const CFC* cfc = cfc_por_id.count(perfil.CFC) ? cfc_por_id.at(perfil.CFC) : nullptr;
+
+        if (!cfc || cfc->miembros.size() <= 1) {
+            // CFC de un solo usuario: ambos extremos = directa
+            for (const auto& [clave, valor] : directa) {
+                contextual[clave] = {valor, valor};
+            }
+        } else {
+            // CFC con varios miembros
+            for (const string& tendencia : {"izquierda", "derecha", "libertario", "centro"}) {
+                float d = directa.count(tendencia) ? directa.at(tendencia) : 0.0f;
+                float c = 0.0f;
+
+                if (tendencia == "izquierda") c = cfc->porcentaje_izquierda;
+                else if (tendencia == "derecha") c = cfc->porcentaje_derecha;
+                else if (tendencia == "libertario") c = cfc->porcentaje_libertario;
+                else if (tendencia == "centro") c = cfc->porcentaje_centro;
+
+                contextual[tendencia] = {min(d, c), max(d, c)};
+            }
+        }
+    }
+}
+

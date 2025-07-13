@@ -50,12 +50,45 @@ unordered_map<long long, Perfil> usuarios;
         {3222731, "centro"}         // La Tercera
     };
 
-auto porcentajes = calcularIdeologiaPorDistancia(1330680795799953408, adyacencia, medios);
 
-cout << "Ideología (por distancia):\n";
-for (const auto& [ideologia, valor] : porcentajes) {
-    cout << ideologia << ": " << valor << "%\n";
-}
+    cout << "Calculando ideologías directas...\n";
+
+    auto inicio_ideologia = chrono::high_resolution_clock::now();
+    unordered_map<long long, unordered_map<string, float>> ideologias_directas;
+
+    for (const auto& [id, perfil] : usuarios) {
+       ideologias_directas[id] = calcularIdeologiaPorDistancia(id, adyacencia, medios);
+    }
+
+    auto fin_ideologia = chrono::high_resolution_clock::now();
+    auto tiempo_ideologia = chrono::duration_cast<chrono::milliseconds>(fin_ideologia - inicio_ideologia).count();
+
+    cout << "Tiempo total en calcular ideologías directas: " << tiempo_ideologia << " ms\n";
+
+
+    cout << "Calculando tendencias ideológicas de las CFCs...\n";
+
+    auto inicio_tendencia = chrono::high_resolution_clock::now();
+
+    calcularTendenciaDeCFCs(componentes, ideologias_directas);
+
+    auto fin_tendencia = chrono::high_resolution_clock::now();
+    auto tiempo_tendencia = chrono::duration_cast<chrono::milliseconds>(fin_tendencia - inicio_tendencia).count();
+
+    cout << "Tiempo total en calcular tendencias ideológicas de las CFCs: "
+         << tiempo_tendencia << " ms\n";
+
+
+    cout << "Calculando ideologías en contexto...\n";
+    auto inicio_ctx = chrono::high_resolution_clock::now();
+
+    unordered_map<long long, unordered_map<string, pair<float, float>>> ideologia_contextual;
+    calcularIdeologiaContextualDeUsuarios(usuarios, componentes, ideologias_directas, ideologia_contextual);
+
+    auto fin_ctx = chrono::high_resolution_clock::now();
+    auto tiempo_ctx = chrono::duration_cast<chrono::milliseconds>(fin_ctx - inicio_ctx).count();
+
+    cout << "Tiempo total en calcular ideología contextual: " << tiempo_ctx << " ms\n";
 
   
     return 0;

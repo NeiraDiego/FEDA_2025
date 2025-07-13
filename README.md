@@ -169,3 +169,23 @@ Elegimos incorporar ambos piezas de información en el cálculo de cada definiti
 Durante el desarrollo del código, nos encontramos con una situación que no habíamos previsto de antemano: cuando itentamos imprimir los 10 usuarios mas influyentes nos dimos cuenta de que el uso de unordered map en lugar de un vector para almacenar los usuarios. Hacía necesario copiar todos los datos en un vector y luego realizar un ordenamiento cada vez que quisieramos encontrar un top de usuarios, lo que eliminaba la ventaja de elegir esa estructura. 
 En lugar de esto, encontramos una solucion diferente, hicimos un cambio en el que creamos una funcion que nos permite conocer el los top k usuarios, generalizada en k para poser usarla en el digrafo completo pero también en cada CFC para encontrar el lideres y el conjunto de lideres internos que necesitabamos para el resto de cálculos.
 Esto genera una mejora en terminos temporales de O(E log E) a O(E log k) y como k es constante esto es O(E) que es recorrer solo una vez todos los usuarios (E) para encontrar el top K. 
+
+# Resultados:
+## Ambiente de trabajo
+Se realizaron los experimentos en un computador con windows 11 corriendo WSL2 con un procesadro ARM 64 bits y con las bases de datos entregadas
+
+## Tiempos de lecturas de datos
+Tiempo de carga del archivo de usuarios: 70 ms
+Tiempo de lectura de conexiones: 52 ms
+Tiempo de conversión de User_Name a User_ID: 45 ms
+Tiempo total para encontrar las CFCs: 190 ms
+
+## Resultados iniciales de los datos
+Total de CFCs encontradas: 39230
+CFCs de tamaño 1: 39214
+CFCs de tamaño > 1: 16
+
+## Tiempo de procesamiento de los datos
+Tiempo total en calcular ideologías directas: 78999 ms
+Tiempo total en calcular tendencias ideológicas de las CFCs: 22 ms
+Tiempo total en calcular ideología contextual: 57 ms

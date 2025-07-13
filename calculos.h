@@ -36,5 +36,14 @@ unordered_map<string, float> calcularIdeologiaPorDistancia(
     const unordered_map<long long, string>& medios_ideologicos
 );
 
+void calcularTendenciaDeCFCs(vector<CFC>& componentes,
+                              const unordered_map<long long, unordered_map<string, float>>& ideologias_directas);
+
+void calcularIdeologiaContextualDeUsuarios(
+    const unordered_map<long long, Perfil>& usuarios,
+    const vector<CFC>& componentes,
+    const unordered_map<long long, unordered_map<string, float>>& ideologias_directas,
+    unordered_map<long long, unordered_map<string, pair<float, float>>>& ideologia_contextual
+);
 #endif
 
