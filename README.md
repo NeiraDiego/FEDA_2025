@@ -1,3 +1,13 @@
+# Abstract
+En el presente trabajo se trabaja sobre datos de la red social X (Ex-twitter) y se revisan relaciones de seguimiento entre los usuarios en busqueda de la mejor forma de establecer la relacion entre estas y las mejores formas de trabajar con ellas para encontrar el significado de estas. En particular se busca estimar la ideología de los usuarios en base a su relación con otros y en particular con 4 medios de comunicación escrito con claras tendencias políticas y entre ellos. Todo esto con herramientas de estructuras de datos, de algoritmos computacionales y teoria de grafos.
+# Introducción
+Este trabajo analiza una red social basada en datos de usuarios de Twitter, modelada como un dígrafo con más de 40.000 usuarios y 80.000 conexiones unidireccionales. El objetivo principal fue identificar comunidades (componentes fuertemente conexas, CFC), usuarios influyentes y estimar su tendencia ideológica en función de su proximidad a ciertos medios de comunicación representativos.
+
+Para el tratamiento de datos, se utilizaron estructuras eficientes como unordered_map y Struct, optimizando la carga y búsqueda de información. Se aplicó el algoritmo de Kosaraju para detectar CFCs con una complejidad temporal O(V + E), y se implementaron funciones auxiliares para hallar los usuarios más influyentes dentro de cada comunidad. Dentro de los cuales un BFS que se debió usar para cada Vértice tuvo un gran impacto temporal O(V * E).
+
+La tendencia ideológica de cada usuario se calculó mediante la distancia en el grafo hacia medios de distintas orientaciones (izquierda, derecha, centro y libertario), combinando esta información con la ideología promedio de su comunidad (CFC).
+
+Los resultados muestran que una gran mayoría de los usuarios no pertenece a CFCs significativas y que el cálculo de distancias ideológicas es el componente más costoso computacionalmente. Se concluye que la estructura del grafo es dispersa y que una mayor densidad de conexiones sería necesaria para mejorar la calidad del análisis ideológico con esta estrategia. También se valida la eficiencia de las estructuras y algoritmos elegidos en términos de tiempo de ejecución y uso de memoria.
 # Datos y estructuras:
 ## Usuarios (Vertices)
 archivo:twitter_users.csv
