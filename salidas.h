@@ -2,6 +2,7 @@
 #define SALIDAS_H
 
 #include "captura.h"
+#include "calculos.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -25,6 +26,10 @@ void exportarIdeologiaContextualCSV(
     const string& nombre_archivo
 );
  
+void exportarCFCsCSV(const vector<CFC>& componentes,
+                     const unordered_map<long long, Perfil>& usuarios,
+                     const unordered_map<long long, vector<long long>>& grafo,
+                     const string& nombre_archivo);
 #endif
 
 

@@ -206,3 +206,6 @@ Se realizaron los experimentos en un computador con windows 11 corriendo WSL2 co
 - Tiempo total en calcular ideologías directas: 78999 ms
 - Tiempo total en calcular tendencias ideológicas de las CFCs: 22 ms
 - Tiempo total en calcular ideología contextual: 57 ms
+- Archivo 'ideologia_contextual.csv' generado exitosamente en 102 ms
+- Archivo 'ideologia_directa.csv' generado exitosamente en 75 ms
+- Archivo 'CFCs.csv' generado exitosamente en 89 ms

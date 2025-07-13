@@ -94,5 +94,7 @@ unordered_map<long long, Perfil> usuarios;
   
     exportarIdeologiaContextualCSV(usuarios, ideologia_contextual, "ideologia_contextual.csv");
    
+    exportarCFCsCSV(componentes, usuarios, adyacencia, "CFCs.csv");
+  
     return 0;
 }

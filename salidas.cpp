@@ -1,4 +1,6 @@
 #include "salidas.h"
+#include "calculos.h"
+
 
 #include <algorithm>
 #include <fstream>
@@ -172,4 +174,59 @@ void exportarIdeologiaContextualCSV(
          << duracion << " ms\n";
 }
 
+
+void exportarCFCsCSV(const vector<CFC>& componentes,
+                     const unordered_map<long long, Perfil>& usuarios,
+                     const unordered_map<long long, vector<long long>>& grafo,
+                     const string& nombre_archivo) {
+    cout << "Exportando resumen de CFCs a archivo CSV...\n";
+    auto inicio = chrono::high_resolution_clock::now();
+
+    ofstream salida(nombre_archivo);
+    if (!salida.is_open()) {
+        cerr << "No se pudo abrir el archivo: " << nombre_archivo << endl;
+        return;
+    }
+
+    // Cabecera
+    salida << "CFC_ID;Lider_User_Name;Num_Miembros;"
+           << "Izquierda;Derecha;Libertario;Centro;"
+           << "Miembros;Arcos\n";
+
+    for (const auto& cfc : componentes) {
+        string nombre_lider = usuarios.count(cfc.id) ? usuarios.at(cfc.id).User_Name : "Desconocido";
+        salida << cfc.id << ";" << nombre_lider << ";" << cfc.miembros.size() << ";"
+               << cfc.porcentaje_izquierda << ";" << cfc.porcentaje_derecha << ";"
+               << cfc.porcentaje_libertario << ";" << cfc.porcentaje_centro << ";";
+
+        // Generar lista de miembros
+        string miembros;
+        for (long long id : cfc.miembros) {
+            miembros += to_string(id) + ",";
+        }
+        if (!miembros.empty()) miembros.pop_back(); // eliminar última coma
+        salida << miembros << ";";
+
+        // Generar lista de arcos internos
+        string arcos;
+        for (long long u : cfc.miembros) {
+            if (!grafo.count(u)) continue;
+            for (long long v : grafo.at(u)) {
+                if (cfc.miembros.count(v)) {
+                    arcos += to_string(u) + "→" + to_string(v) + ",";
+                }
+            }
+        }
+        if (!arcos.empty()) arcos.pop_back();
+        salida << arcos << "\n";
+    }
+
+    salida.close();
+
+    auto fin = chrono::high_resolution_clock::now();
+    auto duracion = chrono::duration_cast<chrono::milliseconds>(fin - inicio).count();
+
+    cout << "Archivo '" << nombre_archivo << "' generado exitosamente en "
+         << duracion << " ms\n";
+}
 
