@@ -7,14 +7,15 @@
 #include <vector>
 #include <functional>
 
+using namespace std;
 // Exporta usuarios influyentes e influenciables al CSV
-void guardarUsuariosRelevantes(const std::unordered_map<long long, Perfil>& usuarios,
-                               const std::string& nombre_salida);
+void guardarUsuariosRelevantes(const unordered_map<long long, Perfil>& usuarios,
+                               const string& nombre_salida);
 
 // devuelve los top-k usuarios según un criterio dado
-std::vector<Perfil> topKUsuarios(const std::unordered_map<long long, Perfil>& usuarios,
+vector<Perfil> topKUsuarios(const unordered_map<long long, Perfil>& usuarios,
                                  int k,
-                                 std::function<int(const Perfil&)> criterio);
+                                 function<int(const Perfil&)> criterio);
 
 #endif
 

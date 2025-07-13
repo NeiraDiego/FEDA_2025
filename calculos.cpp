@@ -1,10 +1,15 @@
 #include "calculos.h"
+#include "captura.h"
+#include "salidas.h"
+   
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 #include <stack>
 #include <iostream>
 #include <chrono>
+#include <queue>
+
 
 using namespace std;
 using namespace std::chrono;
@@ -58,9 +63,9 @@ void dfsCFC(long long nodo,
 }
 
 // Función principal: encuentra todas las CFCs
-void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& grafo,
-                   std::unordered_map<long long, Perfil>& usuarios,
-                   std::vector<CFC>& componentes) {
+void encontrarCFCs(const unordered_map<long long, vector<long long>>& grafo,
+                   unordered_map<long long, Perfil>& usuarios,
+                   vector<CFC>& componentes) {
     auto inicio = high_resolution_clock::now();
 
     unordered_set<long long> visitado;
@@ -84,35 +89,53 @@ void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& 
     while (!pila.empty()) {
         long long nodo = pila.top(); pila.pop();
 
-        if (!visitado.count(nodo)) {
-            unordered_set<long long> miembros;
-            dfsCFC(nodo, grafo_invertido, visitado, miembros);
-            CFC componente;
-            componente.miembros = miembros;
+    if (!visitado.count(nodo)) {
+        unordered_set<long long> miembros;
+        dfsCFC(nodo, grafo_invertido, visitado, miembros);
 
-            // Armar submapa con perfiles
-            unordered_map<long long, Perfil> submapa;
+        if (miembros.size() == 1) cantidad_CFC_tam_1++;
+        else cantidad_CFC_tam_mayor_1++;
+
+        CFC componente;
+        componente.miembros = miembros;
+
+        // Armar submapa con perfiles
+        unordered_map<long long, Perfil> submapa;
+        for (long long id : miembros) {
+            auto it = usuarios.find(id);
+            if (it != usuarios.end()) {
+                submapa[id] = it->second;
+            }
+        }
+
+        // Obtener hasta 5 más influyentes
+        auto top5 = topKUsuarios(submapa, 5, [](const Perfil& p) {
+            return p.Followers_Count;
+        });
+
+        if (!top5.empty()) {
+            componente.id = top5[0].User_ID; // el más influyente
+            for (const auto& perfil : top5) {
+                componente.top_influyentes.insert(perfil.User_ID);
+            }
+        } else {
+            componente.id = *miembros.begin(); // fallback
+        }
+
+        // Actualizar campo CFC de cada miembro si tamaño > 1
+        if (miembros.size() > 1) {
             for (long long id : miembros) {
-               auto it = usuarios.find(id);
-               if (it != usuarios.end()) {
-                    submapa[id] = it->second;
-               }
+                if (usuarios.count(id)) {
+                    // cast necesario si usuarios no es referencia no const
+                    const_cast<Perfil&>(usuarios.at(id)).CFC = componente.id;
+                }
             }
-            if (miembros.size() == 1) cantidad_CFC_tam_1++;
-            else cantidad_CFC_tam_mayor_1++;
+        }
 
-           // Elegir ID según el más influyente
-            auto top = topKUsuarios(submapa, 1, [](const Perfil& p) {
-                return p.Followers_Count;
-            });
-            if (!top.empty()) {
-                componente.id = top[0].User_ID;
-            } else {
-                componente.id = *miembros.begin(); // fallback
-            }
+        componentes.push_back(componente);
+}
 
-            componentes.push_back(componente);
-          }
+
     }
 
     auto fin = high_resolution_clock::now();
@@ -131,4 +154,58 @@ void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& 
     cout << "CFCs de tamaño > 1: " << cantidad_CFC_tam_mayor_1 << endl;
 
 }
- 
+
+// bfs auxiliar para poder encontrar las tendencias políticas directas
+unordered_map<long long, int> bfs_distancias(const unordered_map<long long, vector<long long>>& grafo,
+                                             long long origen) {
+    unordered_map<long long, int> distancia;
+    queue<long long> q;
+
+    distancia[origen] = 0;
+    q.push(origen);
+
+    while (!q.empty()) {
+        long long actual = q.front(); q.pop();
+        int d = distancia[actual];
+
+        if (grafo.count(actual)) {
+            for (long long vecino : grafo.at(actual)) {
+                if (!distancia.count(vecino)) {
+                    distancia[vecino] = d + 1;
+                    q.push(vecino);
+                }
+            }
+        }
+    }
+
+    return distancia;
+}
+
+// cálculo de las ideologías por distancia
+unordered_map<string, float> calcularIdeologiaPorDistancia(long long origen,
+    const unordered_map<long long, vector<long long>>& grafo,
+    const unordered_map<long long, string>& medios_ideologicos) {
+
+    // Realizamos BFS desde el usuario
+    auto distancias = bfs_distancias(grafo, origen);
+
+    unordered_map<string, float> resultado;
+    float suma = 0.0;
+
+    // Recorremos cada medio conocido
+    for (const auto& [medio_id, ideologia] : medios_ideologicos) {
+        if (distancias.count(medio_id)) {
+            int d = distancias[medio_id];
+            float peso = 1.0f / d;
+            resultado[ideologia] += peso;
+            suma += peso;
+        }
+    }
+
+    // Normalizamos a porcentaje
+    for (auto& [ideologia, valor] : resultado) {
+        valor = (valor / suma) * 100.0f;
+    }
+
+    return resultado;
+}

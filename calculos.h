@@ -1,26 +1,40 @@
 #ifndef CALCULOS_H
 #define CALCULOS_H
 
+#include "captura.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include "salidas.h"
+#include <string>
 
+using namespace std;
 
-// Representación de una Componente Fuertemente Conexa (CFC)
+// Estructura para representar una Componente Fuertemente Conexa (CFC)
 struct CFC {
-    long long id;  // user_id del miembro más influyente (por ahora se puede dejar igual a cualquier miembro)
-    std::unordered_set<long long> miembros;
+    long long id;
+    unordered_set<long long> miembros;
     float porcentaje_izquierda = 0.0;
-    float porcentaje_derecha = 0.0;
     float porcentaje_libertario = 0.0;
+    float porcentaje_derecha = 0.0;
     float porcentaje_centro = 0.0;
+    unordered_set<long long> top_influyentes;
 };
 
-// Encuentra todas las CFCs usando Kosaraju
-void encontrarCFCs(const std::unordered_map<long long, std::vector<long long>>& grafo,
-                   std::unordered_map<long long, Perfil>& usuarios,
-                   std::vector<CFC>& componentes);
+// Kosaraju: encuentra todas las CFCs
+void encontrarCFCs(const unordered_map<long long, vector<long long>>& grafo,
+                   unordered_map<long long, Perfil>& usuarios,
+                   vector<CFC>& componentes);
+
+// BFS para distancias mínimas
+unordered_map<long long, int> bfs_distancias(const unordered_map<long long, vector<long long>>& grafo,
+                                                  long long origen);
+
+// Ideología basada en distancia a medios
+unordered_map<string, float> calcularIdeologiaPorDistancia(
+    long long origen,
+    const unordered_map<long long, vector<long long>>& grafo,
+    const unordered_map<long long, string>& medios_ideologicos
+);
 
 #endif
 
