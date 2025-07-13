@@ -90,6 +90,9 @@ unordered_map<long long, Perfil> usuarios;
 
     cout << "Tiempo total en calcular ideología contextual: " << tiempo_ctx << " ms\n";
 
+    exportarIdeologiaDirectaCSV(usuarios, ideologias_directas, "ideologia_directa.csv");
   
+    exportarIdeologiaContextualCSV(usuarios, ideologia_contextual, "ideologia_contextual.csv");
+   
     return 0;
 }

@@ -16,7 +16,15 @@ void guardarUsuariosRelevantes(const unordered_map<long long, Perfil>& usuarios,
 vector<Perfil> topKUsuarios(const unordered_map<long long, Perfil>& usuarios,
                                  int k,
                                  function<int(const Perfil&)> criterio);
-
+void exportarIdeologiaDirectaCSV(const unordered_map<long long, Perfil>& usuarios,
+                                 const unordered_map<long long, unordered_map<string, float>>& ideologias_directas,
+                                 const string& nombre_archivo);
+void exportarIdeologiaContextualCSV(
+    const unordered_map<long long, Perfil>& usuarios,
+    const unordered_map<long long, unordered_map<string, pair<float, float>>>& ideologia_contextual,
+    const string& nombre_archivo
+);
+ 
 #endif
 
 

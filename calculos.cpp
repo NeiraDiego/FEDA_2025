@@ -207,6 +207,14 @@ unordered_map<string, float> calcularIdeologiaPorDistancia(long long origen,
         valor = (valor / suma) * 100.0f;
     }
 
+    // Forzar ideología 100% para los medios de comunicación
+    if (medios_ideologicos.count(origen)) {
+      string propia_ideologia = medios_ideologicos.at(origen);
+      for (auto& [ideologia, valor] : resultado) {
+          valor = (ideologia == propia_ideologia) ? 100.0f : 0.0f;
+    }
+}
+
     return resultado;
 }
 

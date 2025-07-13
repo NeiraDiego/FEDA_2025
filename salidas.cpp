@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <chrono>
 
 using namespace std;
 
@@ -75,6 +76,100 @@ vector<Perfil> topKUsuarios(const unordered_map<long long, Perfil>& usuarios,
     });
 
     return resultado;
+}
+
+void exportarIdeologiaDirectaCSV(const unordered_map<long long, Perfil>& usuarios,
+                                 const unordered_map<long long, unordered_map<string, float>>& ideologias_directas,
+                                 const string& nombre_archivo) {
+    cout << "Exportando ideología directa a archivo CSV...\n";
+    auto inicio = chrono::high_resolution_clock::now();
+
+    ofstream salida(nombre_archivo);
+    if (!salida.is_open()) {
+        cerr << "No se pudo abrir el archivo: " << nombre_archivo << endl;
+        return;
+    }
+
+    // Cabecera
+    salida << "User_ID;User_Name;CFC;Izquierda;Derecha;Libertario;Centro\n";
+
+    for (const auto& [id, perfil] : usuarios) {
+        salida << id << ";" << perfil.User_Name << ";" << perfil.CFC << ";";
+
+        if (ideologias_directas.count(id)) {
+            const auto& ideol = ideologias_directas.at(id);
+            float izq = ideol.count("izquierda") ? ideol.at("izquierda") : 0.0f;
+            float der = ideol.count("derecha") ? ideol.at("derecha") : 0.0f;
+            float lib = ideol.count("libertario") ? ideol.at("libertario") : 0.0f;
+            float cen = ideol.count("centro") ? ideol.at("centro") : 0.0f;
+
+            salida << izq << ";" << der << ";" << lib << ";" << cen << "\n";
+        } else {
+            salida << "0;0;0;0\n";
+        }
+    }
+
+    salida.close();
+
+    auto fin = chrono::high_resolution_clock::now();
+    auto duracion = chrono::duration_cast<chrono::milliseconds>(fin - inicio).count();
+
+    cout << "Archivo '" << nombre_archivo << "' generado exitosamente en "
+         << duracion << " ms\n";
+}
+
+void exportarIdeologiaContextualCSV(
+    const unordered_map<long long, Perfil>& usuarios,
+    const unordered_map<long long, unordered_map<string, pair<float, float>>>& ideologia_contextual,
+    const string& nombre_archivo
+) {
+    cout << "Exportando ideología contextual a archivo CSV...\n";
+    auto inicio = chrono::high_resolution_clock::now();
+
+    ofstream salida(nombre_archivo);
+    if (!salida.is_open()) {
+        cerr << "No se pudo abrir el archivo: " << nombre_archivo << endl;
+        return;
+    }
+
+    // Cabecera
+    salida << "User_ID;User_Name;CFC;"
+           << "Izquierda_Min;Izquierda_Max;"
+           << "Derecha_Min;Derecha_Max;"
+           << "Libertario_Min;Libertario_Max;"
+           << "Centro_Min;Centro_Max\n";
+
+    for (const auto& [id, perfil] : usuarios) {
+        salida << id << ";" << perfil.User_Name << ";" << perfil.CFC << ";";
+
+        if (ideologia_contextual.count(id)) {
+            const auto& ideol = ideologia_contextual.at(id);
+
+            auto get_rango = [&](const string& key) {
+                return ideol.count(key) ? ideol.at(key) : make_pair(0.0f, 0.0f);
+            };
+
+            auto [izq_min, izq_max] = get_rango("izquierda");
+            auto [der_min, der_max] = get_rango("derecha");
+            auto [lib_min, lib_max] = get_rango("libertario");
+            auto [cen_min, cen_max] = get_rango("centro");
+
+            salida << izq_min << ";" << izq_max << ";"
+                   << der_min << ";" << der_max << ";"
+                   << lib_min << ";" << lib_max << ";"
+                   << cen_min << ";" << cen_max << "\n";
+        } else {
+            salida << "0;0;0;0;0;0;0;0\n";
+        }
+    }
+
+    salida.close();
+
+    auto fin = chrono::high_resolution_clock::now();
+    auto duracion = chrono::duration_cast<chrono::milliseconds>(fin - inicio).count();
+
+    cout << "Archivo '" << nombre_archivo << "' generado exitosamente en "
+         << duracion << " ms\n";
 }
 
 
