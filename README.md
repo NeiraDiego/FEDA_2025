@@ -1,5 +1,9 @@
 # Abstract
-En el presente trabajo se trabaja sobre datos de la red social X (Ex-twitter) y se revisan relaciones de seguimiento entre los usuarios en busqueda de la mejor forma de establecer la relacion entre estas y las mejores formas de trabajar con ellas para encontrar el significado de estas. En particular se busca estimar la ideología de los usuarios en base a su relación con otros y en particular con 4 medios de comunicación escrito con claras tendencias políticas y entre ellos. Todo esto con herramientas de estructuras de datos, de algoritmos computacionales y teoria de grafos.
+En el presente trabajo se trabaja sobre datos de la red social X (Ex-twitter) y se revisan relaciones (de seguimiento) entre los usuarios.
+Buscamos encontrar la mejor forma de estudiar dichas relaciones y las mejores formas de trabajar con ellas, y así obtener conclusiones de estas. 
+En particular se busca estimar la ideología de los usuarios en base a su relación con otros y en particular con 4 medios de comunicación escrito con claras tendencias políticas y entre ellos. Todo esto con herramientas de estructuras de datos, de algoritmos computacionales y teoria de grafos.
+En particular se utiliza conexidad fuerte y distancia entre nodos para indicar que la existencia de un camino entre un usuario y un medio ideologizado, implica ideología del usuario.
+
 # Introducción
 Este trabajo analiza una red social basada en datos de usuarios de Twitter, modelada como un dígrafo con más de 40.000 usuarios y 80.000 conexiones unidireccionales. El objetivo principal fue identificar comunidades (componentes fuertemente conexas, CFC), usuarios influyentes y estimar su tendencia ideológica en función de su proximidad a ciertos medios de comunicación representativos.
 
@@ -261,6 +265,11 @@ Se realizaron los experimentos en un computador con windows 11 corriendo WSL2 co
 - Archivo 'ideología_contextual.csv' generado exitosamente en 102 ms
 - Archivo 'ideología_directa.csv' generado exitosamente en 75 ms
 - Archivo 'CFCs.csv' generado exitosamente en 89 ms
+
+## Ubicación de los resultados
+- Las componentes fuertemente conexas están reportadas en CFCs.cvs para lectura computacional y en CFCs_legibles.txt para lectura humana
+- Los usuarios relevantes están reportados en usuarios_relevantes.csv
+- Los usuarios con sus ideolgías calculadas estan en ideología_contextual.csv para lectura computacional y en usuarios_legibles.txt para lectura humana
 
 # Conclusiones:
 ## Resultados de los experimentos

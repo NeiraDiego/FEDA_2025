@@ -26,7 +26,7 @@ int main() {
 
     int contador = 0;
 
-    while (getline(archivo_csv, linea) && contador < 100) {
+    while (getline(archivo_csv, linea)/* && contador < 100*/) {
         stringstream ss(linea);
         string campo;
         vector<string> campos;
@@ -52,7 +52,7 @@ int main() {
     archivo_csv.close();
     salida_txt.close();
 
-    cout << "Archivo 'usuarios_legibles.txt' generado con éxito para los primeros 100 usuarios.\n";
+    cout << "Archivo 'usuarios_legibles.txt' generado con éxito.\n";
     return 0;
 }
 
