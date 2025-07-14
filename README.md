@@ -1,7 +1,10 @@
 # Abstract
 En el presente trabajo se trabaja sobre datos de la red social X (Ex-twitter) y se revisan relaciones (de seguimiento) entre los usuarios.
+
 Buscamos encontrar la mejor forma de estudiar dichas relaciones y las mejores formas de trabajar con ellas, y así obtener conclusiones de estas. 
+
 En particular se busca estimar la ideología de los usuarios en base a su relación con otros y en particular con 4 medios de comunicación escrito con claras tendencias políticas y entre ellos. Todo esto con herramientas de estructuras de datos, de algoritmos computacionales y teoria de grafos.
+
 En particular se utiliza conexidad fuerte y distancia entre nodos para indicar que la existencia de un camino entre un usuario y un medio ideologizado, implica ideología del usuario.
 
 # Introducción
